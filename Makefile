@@ -144,6 +144,7 @@ $(eval ELF_FILE := $(BIN_DIR)/$(call BOOTLOADER_BASENAME_VER,$(BUILD),$(PIN)).el
 $(eval HEX_FILE := $(ELF_FILE:.elf=.hex))
 $(eval DEP_FILE := $(ELF_FILE:.elf=.d))
 $(eval BIN_FILE := $(ELF_FILE:.elf=.bin))
+$(eval MAP_FILE := $(ELF_FILE:.elf=.map))
 $(eval H_FILE := $(ELF_FILE:.elf=.h))
 $(eval BLU_ELF_FILE := $(BIN_DIR)/$(call BOOTLOADER_UPDATE_BASENAME_VER,$(BUILD),$(PIN)).elf)
 $(eval BLU_HEX_FILE := $(BLU_ELF_FILE:.elf=.hex))
@@ -170,7 +171,7 @@ $(ELF_FILE): $$(SRC_$(MCU)_BL) $$(SRC_BL) $$(SRC_DRONECAN)
 	$$(QUIET)echo building bootloader for $(BUILD) with pin $(PIN)
 	$$(QUIET)$$(MKDIR) -p $(OBJ)
 	$$(QUIET)echo Compiling $(notdir $$@)
-	$$(QUIET)$(xCC) $$(CFLAGS_BL) $(CFLAGS_DRONECAN) $$(LDFLAGS_BL) -MMD -MP -MF $(DEP_FILE) -o $$(@) $$(SRC_$(MCU)_BL) $$(SRC_BL) $(SRC_DRONECAN)
+	$$(QUIET)$(xCC) $$(CFLAGS_BL) $(CFLAGS_DRONECAN) $$(LDFLAGS_BL) -MMD -MP -MF $(DEP_FILE) -o $$(@) $$(SRC_$(MCU)_BL) $$(SRC_BL) $(SRC_DRONECAN) -Wl,-Map=$(MAP_FILE)
 	$$(QUIET)$$(CP) -f $$@ $$(OBJ)$$(DSEP)debug.elf
 	$$(QUIET)$$(CP) -f $$(SVD_$(MCU)) $$(OBJ)/debug.svd
 	$$(QUIET)$$(CP) -f Mcu$(DSEP)$(call lc,$(MCU))$(DSEP)openocd.cfg $$(OBJ)$$(DSEP)openocd.cfg > $$(NUL)
